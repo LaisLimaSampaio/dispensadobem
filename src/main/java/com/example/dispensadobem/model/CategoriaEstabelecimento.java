@@ -1,7 +1,10 @@
 package com.example.dispensadobem.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "categoria_estabelecimento")
@@ -16,5 +19,9 @@ public class CategoriaEstabelecimento {
 
     @Column(nullable = false, unique = true)
     private String nome;
+
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Estabelecimento> estabelecimentos;
 }
 

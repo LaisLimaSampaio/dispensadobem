@@ -1,13 +1,18 @@
 package com.example.dispensadobem.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cliente")
@@ -19,7 +24,7 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;
@@ -31,10 +36,11 @@ public class Cliente {
     private String senha;
 
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String telefone;
 
-    @Column(name = "data_criacao")
+    @Column(name = "data_criacao", updatable = false)
+    @CreationTimestamp
     private LocalDateTime dataCriacao;
 
     public Cliente(String nome, String email, String senha, String telefone) {
@@ -47,17 +53,23 @@ public class Cliente {
 
     //relacionamentos
 
-    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
+
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private EnderecoCliente endereco;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Favorito> favoritos;
+    @JsonManagedReference
+    private List<Favorito> favoritos = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
     
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Avaliacao> avaliacoes;
-    
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Pedido> pedidos;
+    @JsonIgnore
+    private List<Pedido> pedidos = new ArrayList<>();
 
 
 }
