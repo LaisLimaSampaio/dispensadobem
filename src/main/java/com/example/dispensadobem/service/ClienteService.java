@@ -1,6 +1,9 @@
 package com.example.dispensadobem.service;
 
+import com.example.dispensadobem.dto.ClienteDTO;
+import com.example.dispensadobem.dto.EnderecoClienteDTO;
 import com.example.dispensadobem.model.Cliente;
+import com.example.dispensadobem.model.EnderecoCliente;
 import com.example.dispensadobem.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,35 @@ public class ClienteService {
         return clienteRepository.findByEmail(email)
                 .filter(cliente -> cliente.getSenha().equals(senha));
     }
+
+    // Exemplo no ClienteService
+
+    public Cliente fromDTO(ClienteDTO dto) {
+        Cliente cliente = new Cliente();
+        cliente.setNome(dto.getNome());
+        cliente.setEmail(dto.getEmail());
+        cliente.setSenha(dto.getSenha());
+        cliente.setTelefone(dto.getTelefone());
+
+        if (dto.getEndereco() != null) {
+            EnderecoCliente endereco = new EnderecoCliente();
+            EnderecoClienteDTO eDto = dto.getEndereco();
+
+            endereco.setRua(eDto.getRua());
+            endereco.setNumero(eDto.getNumero());
+            endereco.setComplemento(eDto.getComplemento());
+            endereco.setBairro(eDto.getBairro());
+            endereco.setCidade(eDto.getCidade());
+            endereco.setEstado(eDto.getEstado());
+            endereco.setCep(eDto.getCep());
+
+            endereco.setCliente(cliente);
+            cliente.setEndereco(endereco);
+        }
+
+        return cliente;
+    }
+
 
 
 }

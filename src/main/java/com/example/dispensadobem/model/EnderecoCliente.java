@@ -1,5 +1,6 @@
 package com.example.dispensadobem.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +37,7 @@ public class EnderecoCliente {
 
     @OneToOne
     @JoinColumn(name = "cliente_id", unique = true)
-    @JsonBackReference
+    @JsonIgnore
     private Cliente cliente;
 
     public EnderecoCliente(String rua, String numero, String complemento, String bairro,

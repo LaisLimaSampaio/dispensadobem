@@ -1,5 +1,6 @@
 package com.example.dispensadobem.controller;
 
+import com.example.dispensadobem.dto.EstabelecimentoDTO;
 import com.example.dispensadobem.dto.LoginDTO;
 import com.example.dispensadobem.model.CategoriaEstabelecimento;
 import com.example.dispensadobem.model.Estabelecimento;
@@ -36,27 +37,15 @@ public class EstabelecimentoController {
     }
 
     @PostMapping
-    public ResponseEntity<Estabelecimento> criar(@RequestBody Estabelecimento estabelecimento) {
-        // Verifica e associa o Endereço
-        if (estabelecimento.getEndereco() != null) {
-            estabelecimento.getEndereco().setEstabelecimento(estabelecimento);
+    public ResponseEntity<Estabelecimento> criar(@RequestBody EstabelecimentoDTO dto) {
+        try {
+            Estabelecimento estabelecimento = estabelecimentoService.fromDTO(dto);
+            Estabelecimento salvo = estabelecimentoService.salvar(estabelecimento);
+            return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
-        // Verifica e associa a Categoria existente
-        if (estabelecimento.getCategoria() != null && estabelecimento.getCategoria().getId() != null) {
-            Optional<CategoriaEstabelecimento> categoriaExistente = categoriaEstabelecimentoService.buscarPorId(estabelecimento.getCategoria().getId());
-
-            if (categoriaExistente.isEmpty()) {
-                return ResponseEntity.badRequest().build(); // ou retornar mensagem específica
-            }
-
-            estabelecimento.setCategoria(categoriaExistente.get());
-        }
-
-        Estabelecimento salvo = estabelecimentoService.salvar(estabelecimento);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
-
 
 
     @PutMapping("/{id}")

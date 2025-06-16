@@ -9,4 +9,5 @@ public interface EstabelecimentoRepository extends JpaRepository<Estabelecimento
     Optional<Estabelecimento> findByCnpj(String cnpj);
     Optional<Estabelecimento> findByEmail(String email);
     Optional<Estabelecimento> findByEmailAndSenha(String email, String senha);
+
 }

@@ -55,13 +55,11 @@ public class Cliente {
 
 
     @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
     private EnderecoCliente endereco;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Favorito> favoritos = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     @JsonIgnore

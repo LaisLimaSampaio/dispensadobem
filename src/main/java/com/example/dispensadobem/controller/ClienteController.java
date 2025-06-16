@@ -1,5 +1,6 @@
 package com.example.dispensadobem.controller;
 
+import com.example.dispensadobem.dto.ClienteDTO;
 import com.example.dispensadobem.dto.LoginDTO;
 import com.example.dispensadobem.model.Cliente;
 import com.example.dispensadobem.service.ClienteService;
@@ -31,9 +32,11 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public Cliente criar(@RequestBody Cliente cliente) {
-        return clienteService.salvar(cliente);
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<Cliente> criar(@RequestBody ClienteDTO clienteDTO) {
+        Cliente cliente = clienteService.fromDTO(clienteDTO);
+        Cliente salvo = clienteService.salvar(cliente);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")

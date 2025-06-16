@@ -1,6 +1,7 @@
 package com.example.dispensadobem.controller;
 
 
+import com.example.dispensadobem.dto.ProdutoDTO;
 import com.example.dispensadobem.model.CategoriaProduto;
 import com.example.dispensadobem.model.Estabelecimento;
 import com.example.dispensadobem.model.Produto;
@@ -44,31 +45,23 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> criarProduto(@RequestBody Produto produto) {
-        // Buscar e validar o Estabelecimento
-        Long estabelecimentoId = produto.getEstabelecimento().getId();
-        Optional<Estabelecimento> estabelecimento = estabelecimentoService.buscarPorId(estabelecimentoId);
-        if (estabelecimento.isEmpty()) {
+    public ResponseEntity<?> criarProduto(@RequestBody ProdutoDTO dto) {
+        Produto produto = produtoService.fromDTO(dto); // converte o DTO em entidade
+
+        // Verifica se o estabelecimento foi encontrado e setado
+        if (produto.getEstabelecimento() == null) {
             return ResponseEntity.badRequest().body("Estabelecimento não encontrado.");
         }
 
-        // Buscar e validar a Categoria
-        if (produto.getCategoria() != null && produto.getCategoria().getId() != null) {
-            Long categoriaId = produto.getCategoria().getId();
-            Optional<CategoriaProduto> categoria = categoriaProdutoService.buscarPorId(categoriaId);
-            if (categoria.isEmpty()) {
-                return ResponseEntity.badRequest().body("Categoria não encontrada.");
-            }
-            produto.setCategoria(categoria.get());
-        } else {
-            produto.setCategoria(null); // se categoria for opcional
+        // Se categoria for obrigatória e não for encontrada:
+        if (dto.getCategoria() != null && produto.getCategoria() == null) {
+            return ResponseEntity.badRequest().body("Categoria não encontrada.");
         }
 
-        // Associar e salvar
-        produto.setEstabelecimento(estabelecimento.get());
         Produto novoProduto = produtoService.salvar(produto);
         return ResponseEntity.status(201).body(novoProduto);
     }
+
 
 
 
